@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Stock Info App</string>
+    <string name="search">Search for a stock here</string>
+    <string name="api_key">IB3VPAFFADOSKTJO</string>
+    <string name="api_key2">W44S0QJCWFVHJXE1</string>
+    <string name="pe_ratio">P/E Ratio</string>
+    <string name="eps">EPS</string>
+    <string name="year_high">52 Week High</string>
+    <string name="year_low">52 Week Low</string>
+    <string name="no_info_found">No information available for the selected symbol</string>
+    <string name="add">Add to Watchlist</string>
+    <string name="remove">Remove From Watchlist</string>
+</resources>
