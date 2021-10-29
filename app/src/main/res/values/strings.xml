@@ -10,4 +10,5 @@
     <string name="no_info_found">No information available for the selected symbol</string>
     <string name="add">Add to Watchlist</string>
     <string name="remove">Remove From Watchlist</string>
+    <string name="notice">Start searching for stocks to add to the list</string>
 </resources>

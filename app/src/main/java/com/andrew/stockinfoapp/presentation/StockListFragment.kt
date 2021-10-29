@@ -37,6 +37,9 @@ class StockListFragment : Fragment() {
         val model: StockListViewModel by viewModels()
         model.stocks.observe(this, { stocks ->
             adapter.updateData(stocks)
+
+            binding.notice.visibility = if (model.stocks.value?.isEmpty() == true)
+                View.VISIBLE else View.INVISIBLE
         })
 
         return binding.root
