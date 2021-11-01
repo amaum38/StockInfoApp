@@ -1,18 +1,16 @@
 package com.andrew.stockinfoapp.presentation
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.ListFragment
 import androidx.lifecycle.ViewModelProvider
 import com.andrew.stockinfoapp.R
-import com.andrew.stockinfoapp.framework.Endpoints
 import com.andrew.stockinfoapp.databinding.FragmentInfoBinding
 import com.andrew.stockinfoapp.domain.Stock
+import com.andrew.stockinfoapp.interactors.Endpoints
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

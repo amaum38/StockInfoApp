@@ -1,4 +1,4 @@
-package com.andrew.stockinfoapp.framework
+package com.andrew.stockinfoapp.interactors
 
 import com.andrew.stockinfoapp.domain.SearchableStockItems
 import com.andrew.stockinfoapp.domain.Stock

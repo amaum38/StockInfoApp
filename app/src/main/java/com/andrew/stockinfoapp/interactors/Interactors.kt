@@ -1,4 +1,4 @@
-package com.andrew.stockinfoapp.framework
+package com.andrew.stockinfoapp.interactors
 
 data class Interactors(
     val addStock: AddStock,

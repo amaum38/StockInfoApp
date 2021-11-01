@@ -1,4 +1,4 @@
-package com.andrew.stockinfoapp.framework
+package com.andrew.stockinfoapp.interactors
 
 import android.content.Context
 import android.view.LayoutInflater

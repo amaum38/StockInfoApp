@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andrew.stockinfoapp.databinding.FragmentStockListBinding
 import com.andrew.stockinfoapp.domain.Stock
-import com.andrew.stockinfoapp.framework.StockAdapter
+import com.andrew.stockinfoapp.interactors.StockAdapter
 
 class StockListFragment : Fragment() {
     private var _binding: FragmentStockListBinding? = null

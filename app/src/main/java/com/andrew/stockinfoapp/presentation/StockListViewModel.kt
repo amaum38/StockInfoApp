@@ -3,7 +3,7 @@ package com.andrew.stockinfoapp.presentation
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import com.andrew.stockinfoapp.domain.Stock
-import com.andrew.stockinfoapp.framework.Interactors
+import com.andrew.stockinfoapp.interactors.Interactors
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent

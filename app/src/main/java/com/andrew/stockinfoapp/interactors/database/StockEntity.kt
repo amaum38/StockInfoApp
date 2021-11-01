@@ -1,12 +1,6 @@
-package com.andrew.stockinfoapp.framework.database
+package com.andrew.stockinfoapp.interactors.database
 
 import androidx.room.*
-import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
-
-import com.google.gson.Gson
-import java.lang.reflect.Type
-import java.util.*
 
 
 @Entity(tableName = "stock")

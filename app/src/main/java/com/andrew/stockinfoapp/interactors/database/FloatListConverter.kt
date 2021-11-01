@@ -1,4 +1,4 @@
-package com.andrew.stockinfoapp.framework.database
+package com.andrew.stockinfoapp.interactors.database
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

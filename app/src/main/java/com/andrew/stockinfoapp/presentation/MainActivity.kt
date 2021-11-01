@@ -6,12 +6,11 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.provider.BaseColumns
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.andrew.stockinfoapp.framework.Endpoints
+import com.andrew.stockinfoapp.interactors.Endpoints
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
 import com.andrew.stockinfoapp.domain.SearchableStockItems
@@ -22,11 +21,7 @@ import retrofit2.Response
 
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.ListFragment
 import com.andrew.stockinfoapp.domain.SearchableStock
-import com.andrew.stockinfoapp.domain.Stock
-import com.andrew.stockinfoapp.framework.StockAdapter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

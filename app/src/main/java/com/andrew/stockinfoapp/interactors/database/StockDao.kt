@@ -1,7 +1,6 @@
-package com.andrew.stockinfoapp.framework.database
+package com.andrew.stockinfoapp.interactors.database
 
 import androidx.room.*
-import com.andrew.stockinfoapp.domain.Stock
 
 @Dao
 interface StockDao {
