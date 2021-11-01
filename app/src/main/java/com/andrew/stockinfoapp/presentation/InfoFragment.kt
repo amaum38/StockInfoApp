@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.FragmentInfoBinding
+import com.andrew.stockinfoapp.framework.Constants
 
 class InfoFragment : Fragment() {
     private var _binding: FragmentInfoBinding? = null
@@ -28,7 +29,7 @@ class InfoFragment : Fragment() {
         _binding = FragmentInfoBinding.inflate(inflater, container, false)
 
         if (savedInstanceState != null) {
-            symbol = savedInstanceState.getString("symbol", "")
+            symbol = savedInstanceState.getString(Constants.SYMBOL, "")
         }
 
         binding.addStock.setOnClickListener {
@@ -38,7 +39,7 @@ class InfoFragment : Fragment() {
 
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.info, activity?.supportFragmentManager
-                    ?.findFragmentByTag("list") ?: StockListFragment(), "List")
+                    ?.findFragmentByTag(Constants.LIST) ?: StockListFragment(), Constants.LIST)
                 ?.commit()
         }
 
@@ -49,7 +50,7 @@ class InfoFragment : Fragment() {
 
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.info, activity?.supportFragmentManager
-                        ?.findFragmentByTag("list") ?: StockListFragment(), "List")
+                        ?.findFragmentByTag(Constants.LIST) ?: StockListFragment(), Constants.LIST)
                     ?.commit()
             } else {
                 binding.name.text = stock.name
@@ -82,7 +83,7 @@ class InfoFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("symbol", symbol)
+        outState.putString(Constants.SYMBOL, symbol)
     }
 
     override fun onDestroyView() {

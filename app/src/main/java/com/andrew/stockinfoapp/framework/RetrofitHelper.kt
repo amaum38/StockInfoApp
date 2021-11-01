@@ -26,7 +26,7 @@ interface Endpoints {
 }
 
 interface ResponseInterface {
-    fun onSucess(reversed: List<Float>)
+    fun onSucess(list: List<Any>)
     fun onFailure(code: String)
 }
 

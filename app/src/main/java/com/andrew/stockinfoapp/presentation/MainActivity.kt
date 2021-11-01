@@ -12,21 +12,19 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
 import com.andrew.stockinfoapp.domain.SearchableStock
-import com.andrew.stockinfoapp.domain.SearchableStockItems
 import com.andrew.stockinfoapp.framework.Constants
-import com.andrew.stockinfoapp.framework.Endpoints
-import org.koin.android.ext.android.inject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.andrew.stockinfoapp.framework.ResponseInterface
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var searchView: SearchView
     private lateinit var mStocks: List<SearchableStock>
+    private lateinit var viewModel: MainViewModel
+    private lateinit var cursorAdapter: CursorAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +36,27 @@ class MainActivity : AppCompatActivity() {
                 .add(R.id.info,  StockListFragment(), "list")
                 .commit()
         }
+
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel.searchString.observe(this, {
+            viewModel.getStocksFromQuery(object: ResponseInterface {
+                override fun onSucess(list: List<Any>) {
+                    val cursor = MatrixCursor(arrayOf(BaseColumns._ID,
+                        SearchManager.SUGGEST_COLUMN_TEXT_1))
+                    mStocks = list as List<SearchableStock>
+                    mStocks.forEachIndexed { index, item ->
+                        cursor.addRow(arrayOf(index,
+                            item.name + " (" + item.symbol + ")"))
+                    }
+
+                    cursorAdapter.changeCursor(cursor)
+                }
+
+                override fun onFailure(code: String) {
+                    Toast.makeText(this@MainActivity, code, Toast.LENGTH_SHORT).show()
+                }
+            })
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -50,16 +69,18 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    fun Context.hideKeyboard(view: View) {
+    private fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    fun setupSearch() {
-        val api: Endpoints by inject()
+    /**
+     * Setup the searchview with a cursor adapter and set text change listener
+     */
+    private fun setupSearch() {
         val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
         val to = intArrayOf(R.id.item_label)
-        val cursorAdapter = SimpleCursorAdapter(this, R.layout.suggestion_item,
+        cursorAdapter = SimpleCursorAdapter(this, R.layout.suggestion_item,
             null, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
 
         searchView.suggestionsAdapter = cursorAdapter
@@ -74,37 +95,8 @@ class MainActivity : AppCompatActivity() {
                 if (query.length < 2)
                     return true
 
-                val call = api.getSymbols(query, Constants.API_KEY_1)
-                call.enqueue(object : Callback<SearchableStockItems> {
-                    override fun onResponse(call: Call<SearchableStockItems>,
-                                            response: Response<SearchableStockItems>) {
-                        if (response.isSuccessful) {
-                            val cursor = MatrixCursor(arrayOf(BaseColumns._ID,
-                                SearchManager.SUGGEST_COLUMN_TEXT_1))
-                            val stocks = response.body()?.bestMatches
-                            if (stocks != null && stocks.isNotEmpty()) {
-                                mStocks = stocks
-                                stocks.forEachIndexed { index, item ->
-                                    cursor.addRow(arrayOf(index,
-                                        item.name + " (" + item.symbol + ")"))
-                                }
-                            }
-
-                            cursorAdapter.changeCursor(cursor)
-                        } else {
-                            Toast.makeText(this@MainActivity,
-                                "${response.code()}",
-                                Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<SearchableStockItems>, t: Throwable) {
-                        Toast.makeText(this@MainActivity,
-                            "${t.message}",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                })
-
+                //update the live data string which will trigger a new query
+                viewModel.searchString.value = query
                 return true
             }
         })
@@ -127,26 +119,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showInfoFragment(symbol: String) {
-        val fragment: Fragment? = supportFragmentManager.findFragmentByTag("info")
+        val fragment: Fragment? = supportFragmentManager.findFragmentByTag(Constants.INFO)
         if (fragment != null && (fragment as InfoFragment).isVisible) {
             fragment.setSymbol(symbol)
         } else {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.info,  InfoFragment().also {
                     it.setSymbol(symbol)
-                }, "info").commit()
+                }, Constants.INFO).commit()
         }
     }
 
     override fun onBackPressed() {
-        val fragment: Fragment? = supportFragmentManager.findFragmentByTag("info")
+        val fragment: Fragment? = supportFragmentManager.findFragmentByTag(Constants.INFO)
         if (fragment != null && (fragment as InfoFragment).isVisible) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.info,  StockListFragment(), "list")
+                .replace(R.id.info,  StockListFragment(), Constants.LIST)
                 .commit()
         } else {
             finish()
         }
-
     }
 }
