@@ -1,6 +1,8 @@
 package com.andrew.stockinfoapp.framework.database
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 
 @Entity(tableName = "stock")

@@ -4,24 +4,24 @@ import android.app.SearchManager
 import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.andrew.stockinfoapp.framework.Endpoints
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
+import com.andrew.stockinfoapp.domain.SearchableStock
 import com.andrew.stockinfoapp.domain.SearchableStockItems
+import com.andrew.stockinfoapp.framework.Constants
+import com.andrew.stockinfoapp.framework.Endpoints
 import org.koin.android.ext.android.inject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-import android.widget.*
-import androidx.fragment.app.Fragment
-import com.andrew.stockinfoapp.domain.SearchableStock
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 if (query.length < 2)
                     return true
 
-                val call = api.getSymbols(query, getString(R.string.api_key))
+                val call = api.getSymbols(query, Constants.API_KEY_1)
                 call.enqueue(object : Callback<SearchableStockItems> {
                     override fun onResponse(call: Call<SearchableStockItems>,
                                             response: Response<SearchableStockItems>) {

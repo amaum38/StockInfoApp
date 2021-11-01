@@ -25,7 +25,7 @@ class StockListFragment : Fragment() {
         binding.stockList.addItemDecoration(
             DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
 
-        val adapter = StockAdapter(mContext, object: StockAdapter.OnItemClickListener {
+        val adapter = StockAdapter(object: StockAdapter.OnItemClickListener {
             override fun onItemClicked(stock: Stock) {
                 (mContext as MainActivity).showInfoFragment(stock.symbol)
             }
@@ -37,7 +37,7 @@ class StockListFragment : Fragment() {
         val model: StockListViewModel by viewModels()
         model.stocks.observe(this, { stocks ->
             adapter.updateData(stocks)
-
+            model.checkforUpdates(adapter)
             binding.notice.visibility = if (model.stocks.value?.isEmpty() == true)
                 View.VISIBLE else View.INVISIBLE
         })
