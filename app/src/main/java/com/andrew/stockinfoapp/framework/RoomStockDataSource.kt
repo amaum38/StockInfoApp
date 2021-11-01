@@ -1,10 +1,10 @@
-package com.andrew.stockinfoapp.interactors
+package com.andrew.stockinfoapp.framework
 
 import android.content.Context
 import com.andrew.stockinfoapp.data.StockDataSource
 import com.andrew.stockinfoapp.domain.Stock
-import com.andrew.stockinfoapp.interactors.database.AppDatabase
-import com.andrew.stockinfoapp.interactors.database.StockEntity
+import com.andrew.stockinfoapp.framework.database.AppDatabase
+import com.andrew.stockinfoapp.framework.database.StockEntity
 import org.koin.core.component.KoinComponent
 
 

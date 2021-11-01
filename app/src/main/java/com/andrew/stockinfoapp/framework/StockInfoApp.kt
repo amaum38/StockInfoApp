@@ -1,7 +1,8 @@
-package com.andrew.stockinfoapp.interactors
+package com.andrew.stockinfoapp.framework
 
 import android.app.Application
 import com.andrew.stockinfoapp.data.StockRepository
+import com.andrew.stockinfoapp.interactors.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -11,6 +12,8 @@ class StockInfoApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        val stockRepository = StockRepository(RoomStockDataSource(this))
+
         val networkModule = module {
             single { provideGson() }
             single { provideOkHttpClient() }
@@ -18,7 +21,7 @@ class StockInfoApp : Application() {
             single { provideApi(get()) }
         }
 
-        val stockRepository = StockRepository(RoomStockDataSource(this))
+        //val stockRepository = StockRepository(RoomStockDataSource(this))
 
         val mainModule = module {
             single { Interactors(

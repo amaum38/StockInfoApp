@@ -10,7 +10,7 @@ import android.provider.BaseColumns
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.andrew.stockinfoapp.interactors.Endpoints
+import com.andrew.stockinfoapp.framework.Endpoints
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
 import com.andrew.stockinfoapp.domain.SearchableStockItems

@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.FragmentInfoBinding
 import com.andrew.stockinfoapp.domain.Stock
-import com.andrew.stockinfoapp.interactors.Endpoints
+import com.andrew.stockinfoapp.framework.Endpoints
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

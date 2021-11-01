@@ -1,4 +1,6 @@
-package com.andrew.stockinfoapp.interactors
+package com.andrew.stockinfoapp.framework
+
+import com.andrew.stockinfoapp.interactors.*
 
 data class Interactors(
     val addStock: AddStock,

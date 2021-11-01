@@ -1,4 +1,4 @@
-package com.andrew.stockinfoapp.interactors.database
+package com.andrew.stockinfoapp.framework.database
 
 import android.content.Context
 import androidx.room.Database
