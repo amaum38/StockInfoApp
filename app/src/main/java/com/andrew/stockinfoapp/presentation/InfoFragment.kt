@@ -38,8 +38,8 @@ class InfoFragment : Fragment() {
 
         binding.addStock.setOnClickListener {
             //Either add or remove based on if it is already in the database
-            viewModel.stock.value?.let { it -> if (viewModel.isInList.value == true)
-                viewModel.removeStock(it) else viewModel.addStock(it) }
+            viewModel.stock.value?.let { stock -> if (viewModel.isInList.value == true)
+                viewModel.removeStock(stock) else viewModel.addStock(stock) }
 
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.info, activity?.supportFragmentManager

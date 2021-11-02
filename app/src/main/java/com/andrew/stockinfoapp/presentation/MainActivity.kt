@@ -44,8 +44,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.searchString.observe(this, {
             lifecycleScope.launch(Dispatchers.IO) {
-                val result = viewModel.getStocksFromQuery()
-                when (result) {
+                when (val result = viewModel.getStocksFromQuery()) {
                     is Result.Success -> {
                         val cursor = MatrixCursor(arrayOf(BaseColumns._ID,
                             SearchManager.SUGGEST_COLUMN_TEXT_1))

@@ -2,7 +2,7 @@ package com.andrew.stockinfoapp.domain
 
 sealed class Result {
     class Success() : Result() {
-        var data: List<Any> = emptyList()
+        lateinit var data: Any
     }
     data class Failure(val errorMessage: String) : Result()
 }
