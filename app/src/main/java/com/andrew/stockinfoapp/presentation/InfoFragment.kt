@@ -14,6 +14,7 @@ import com.andrew.stockinfoapp.domain.Result
 import com.andrew.stockinfoapp.framework.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class InfoFragment : Fragment() {
     private var _binding: FragmentInfoBinding? = null
@@ -74,7 +75,10 @@ class InfoFragment : Fragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     when (val result = viewModel.loadInfo(symbol)) {
                         is Result.Failure -> {
-                            Toast.makeText(activity, result.errorMessage, Toast.LENGTH_SHORT).show()
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(activity, result.errorMessage, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
                     }
                 }
