@@ -7,9 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.FragmentInfoBinding
+import com.andrew.stockinfoapp.domain.Result
 import com.andrew.stockinfoapp.framework.Constants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class InfoFragment : Fragment() {
     private var _binding: FragmentInfoBinding? = null
@@ -46,7 +50,8 @@ class InfoFragment : Fragment() {
         viewModel = ViewModelProvider(this)[InfoViewModel::class.java]
         viewModel.stock.observe(viewLifecycleOwner, { stock ->
             if (stock.name == null) {
-                Toast.makeText(activity, getString(R.string.no_info_found), Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.no_info_found),
+                    Toast.LENGTH_SHORT).show()
 
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.info, activity?.supportFragmentManager
@@ -66,9 +71,13 @@ class InfoFragment : Fragment() {
             if (it.isNotEmpty()) {
                 viewModel.stock.value = it[0]
             } else {
-                val code = viewModel.loadInfo(symbol)
-                if (code != "")
-                    Toast.makeText(activity, code, Toast.LENGTH_SHORT).show()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    when (val result = viewModel.loadInfo(symbol)) {
+                        is Result.Failure -> {
+                            Toast.makeText(activity, result.errorMessage, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         })
 

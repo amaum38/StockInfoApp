@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RemoveStock(private val stockRepository: StockRepository) {
-    suspend operator fun invoke(stock: Stock) = withContext(Dispatchers.Default) {
+    suspend operator fun invoke(stock: Stock) = withContext(Dispatchers.IO) {
         stockRepository.removeStock(stock)
     }
 }

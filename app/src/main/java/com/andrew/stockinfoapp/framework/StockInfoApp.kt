@@ -15,7 +15,7 @@ class StockInfoApp : Application() {
         val stockRepository = StockRepository(RoomStockDataSource(this))
 
         val networkModule = module {
-            single { provideGson() }
+            single { provideJson() }
             single { provideOkHttpClient() }
             single { provideRetrofit(get()) }
             single { provideApi(get()) }

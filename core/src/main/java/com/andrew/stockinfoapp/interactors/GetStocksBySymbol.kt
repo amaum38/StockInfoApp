@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetStocksBySymbol(private val stockRepository: StockRepository) {
-    suspend operator fun invoke(symbol: String) = withContext(Dispatchers.Default) {
+    suspend operator fun invoke(symbol: String) = withContext(Dispatchers.IO) {
         stockRepository.getStocksBySymbol(symbol)
     }
 }

@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetStocks(private val stockRepository: StockRepository) {
-    suspend operator fun invoke() = withContext(Dispatchers.Default) {
+    suspend operator fun invoke() = withContext(Dispatchers.IO) {
         stockRepository.getStocks()
     }
 }

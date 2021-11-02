@@ -1,11 +1,13 @@
 package com.andrew.stockinfoapp.domain
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SearchableStockItems (
     val bestMatches: List<SearchableStock>
 )
 
-
-data class SearchableStock(@SerializedName("1. symbol")val symbol: String,
-                           @SerializedName("2. name")val name: String)
+@Serializable
+data class SearchableStock(@SerialName("1. symbol")val symbol: String,
+                           @SerialName("2. name")val name: String)
