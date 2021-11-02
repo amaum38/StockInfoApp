@@ -12,7 +12,7 @@ class RoomStockDataSource(context: Context) : StockDataSource, KoinComponent {
     private val dao = AppDatabase.getInstance(context).stockDao()
 
     override suspend fun add(stock: Stock) {
-        dao.addStock(StockEntity(symbol = stock.symbol,
+        dao.addStock(StockEntity(symbol = stock.symbol ?: "",
             name = stock.name,
             description = stock.description,
             peRatio = stock.peRatio,
@@ -24,7 +24,7 @@ class RoomStockDataSource(context: Context) : StockDataSource, KoinComponent {
     }
 
     override suspend fun remove(stock: Stock) {
-        dao.removeStock(StockEntity(symbol = stock.symbol,
+        dao.removeStock(StockEntity(symbol = stock.symbol ?: "",
             name = stock.name,
             description = stock.description,
             peRatio = stock.peRatio,
@@ -61,7 +61,7 @@ class RoomStockDataSource(context: Context) : StockDataSource, KoinComponent {
             it.lastUpdate) }
 
     override suspend fun update(stock: Stock) {
-        dao.updateStock(StockEntity(symbol = stock.symbol,
+        dao.updateStock(StockEntity(symbol = stock.symbol ?: "",
             name = stock.name,
             description = stock.description,
             peRatio = stock.peRatio,

@@ -6,13 +6,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Serializable
-data class Stock(@SerialName("Symbol") val symbol: String,
-                 @SerialName("Name") val name: String,
-                 @SerialName("Description") val description: String,
-                 @SerialName("PERatio") val peRatio: String,
-                 @SerialName("EPS") val eps: String,
-                 @SerialName("52WeekHigh") val yearHigh: String,
-                 @SerialName("52WeekLow") val yearLow: String,
+data class Stock(@SerialName("Symbol") val symbol: String?,
+                 @SerialName("Name") val name: String?,
+                 @SerialName("Description") val description: String?,
+                 @SerialName("PERatio") val peRatio: String?,
+                 @SerialName("EPS") val eps: String?,
+                 @SerialName("52WeekHigh") val yearHigh: String?,
+                 @SerialName("52WeekLow") val yearLow: String?,
                  var dailyData: List<Float> = emptyList(),
                  var lastUpdate: String = SimpleDateFormat("dd/M/yyyy hh:mm:ss",
                      Locale.US).format(Date())

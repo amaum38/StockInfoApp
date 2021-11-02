@@ -37,6 +37,7 @@ interface ResponseInterface {
 fun provideJson(): Converter.Factory {
     val json = Json {
         ignoreUnknownKeys = true
+        explicitNulls = false
     }
 
     return json.asConverterFactory("application/json".toMediaType())

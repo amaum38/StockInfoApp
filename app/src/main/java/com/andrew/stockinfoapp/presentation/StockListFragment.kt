@@ -27,7 +27,7 @@ class StockListFragment : Fragment() {
 
         val adapter = StockAdapter(object: StockAdapter.OnItemClickListener {
             override fun onItemClicked(stock: Stock) {
-                (mContext as MainActivity).showInfoFragment(stock.symbol)
+                stock.symbol?.let { (mContext as MainActivity).showInfoFragment(it) }
             }
         })
 

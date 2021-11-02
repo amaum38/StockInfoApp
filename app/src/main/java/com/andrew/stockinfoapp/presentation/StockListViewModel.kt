@@ -40,7 +40,7 @@ class StockListViewModel() : ViewModel(), KoinComponent {
                     .parse(stock.lastUpdate)
                 val daysOld = (Date().time - lastUpdate.time) / 86400000
                 if (stock.dailyData.isEmpty() || daysOld >= 1) {
-                    stock.dailyData = getDailyInfo(stock.symbol)
+                    stock.dailyData = stock.symbol?.let { getDailyInfo(it) }!!
                     stock.lastUpdate = SimpleDateFormat(
                         "dd/M/yyyy hh:mm:ss", Locale.US).format(Date())
                     interactors.updateStock(stock)

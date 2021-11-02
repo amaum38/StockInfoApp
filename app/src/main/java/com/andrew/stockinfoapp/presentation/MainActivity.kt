@@ -60,7 +60,13 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     is Result.Failure -> {
-                        Toast.makeText(this@MainActivity, result.errorMessage, Toast.LENGTH_SHORT).show()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                result.errorMessage,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
             }
@@ -120,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                 val cursor = searchView.suggestionsAdapter.getItem(position) as Cursor
                 val selection = cursor.getString(
                     cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
-                showInfoFragment(mStocks[position].symbol)
+                mStocks[position].symbol?.let { showInfoFragment(it) }
                 return true
             }
         })
