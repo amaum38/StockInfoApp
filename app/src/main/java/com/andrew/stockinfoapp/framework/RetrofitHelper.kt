@@ -1,5 +1,6 @@
 package com.andrew.stockinfoapp.framework
 
+import com.andrew.stockinfoapp.domain.Result
 import com.andrew.stockinfoapp.domain.SearchableStockItems
 import com.andrew.stockinfoapp.domain.Stock
 import com.google.gson.JsonElement
@@ -26,8 +27,8 @@ interface Endpoints {
 }
 
 interface ResponseInterface {
-    fun onSucess(list: List<Any>)
-    fun onFailure(code: String)
+    fun onSucess(result: Result)
+    fun onFailure(result: Result)
 }
 
 fun provideGson(): GsonConverterFactory {

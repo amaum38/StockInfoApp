@@ -13,11 +13,15 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
+import com.andrew.stockinfoapp.domain.Result
 import com.andrew.stockinfoapp.domain.SearchableStock
 import com.andrew.stockinfoapp.framework.Constants
-import com.andrew.stockinfoapp.framework.ResponseInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -39,23 +43,28 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.searchString.observe(this, {
-            viewModel.getStocksFromQuery(object: ResponseInterface {
-                override fun onSucess(list: List<Any>) {
-                    val cursor = MatrixCursor(arrayOf(BaseColumns._ID,
-                        SearchManager.SUGGEST_COLUMN_TEXT_1))
-                    mStocks = list as List<SearchableStock>
-                    mStocks.forEachIndexed { index, item ->
-                        cursor.addRow(arrayOf(index,
-                            item.name + " (" + item.symbol + ")"))
+            lifecycleScope.launch(Dispatchers.IO) {
+                val result = viewModel.getStocksFromQuery()
+                when (result) {
+                    is Result.Success -> {
+                        val cursor = MatrixCursor(arrayOf(BaseColumns._ID,
+                            SearchManager.SUGGEST_COLUMN_TEXT_1))
+                        mStocks = result.data as List<SearchableStock>
+                        mStocks.forEachIndexed { index, item ->
+                            cursor.addRow(arrayOf(index,
+                                item.name + " (" + item.symbol + ")"))
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            cursorAdapter.changeCursor(cursor)
+                        }
                     }
 
-                    cursorAdapter.changeCursor(cursor)
+                    is Result.Failure -> {
+                        Toast.makeText(this@MainActivity, result.errorMessage, Toast.LENGTH_SHORT).show()
+                    }
                 }
-
-                override fun onFailure(code: String) {
-                    Toast.makeText(this@MainActivity, code, Toast.LENGTH_SHORT).show()
-                }
-            })
+            }
         })
     }
 

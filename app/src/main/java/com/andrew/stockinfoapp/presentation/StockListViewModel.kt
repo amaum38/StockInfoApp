@@ -1,6 +1,6 @@
 package com.andrew.stockinfoapp.presentation
 
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrew.stockinfoapp.domain.Stock
@@ -20,7 +20,7 @@ import java.util.*
 class StockListViewModel() : ViewModel(), KoinComponent {
     val interactors: Interactors by inject()
 
-    val stocks = MediatorLiveData<List<Stock>>().apply {
+    val stocks = MutableLiveData<List<Stock>>().apply {
         viewModelScope.launch {
             val stocks = interactors.getStocks()
             postValue(stocks)

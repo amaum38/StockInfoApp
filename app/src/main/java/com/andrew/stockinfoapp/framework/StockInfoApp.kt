@@ -21,8 +21,6 @@ class StockInfoApp : Application() {
             single { provideApi(get()) }
         }
 
-        //val stockRepository = StockRepository(RoomStockDataSource(this))
-
         val mainModule = module {
             single { Interactors(
                 AddStock(stockRepository),
