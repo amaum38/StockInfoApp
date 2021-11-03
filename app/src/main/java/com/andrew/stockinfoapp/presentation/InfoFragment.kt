@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.FragmentInfoBinding
 import com.andrew.stockinfoapp.domain.Result
+import com.andrew.stockinfoapp.domain.Stock
 import com.andrew.stockinfoapp.framework.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,6 +75,11 @@ class InfoFragment : Fragment() {
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     when (val result = viewModel.loadInfo(symbol)) {
+                        is Result.Success -> {
+                            withContext(Dispatchers.Main) {
+                                viewModel.stock.value = result.data as Stock
+                            }
+                        }
                         is Result.Failure -> {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(activity, result.errorMessage, Toast.LENGTH_SHORT)

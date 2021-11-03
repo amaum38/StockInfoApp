@@ -55,7 +55,7 @@ class InfoViewModel() : ViewModel(),  KoinComponent {
     /**
      * Load the stocks information from the api
      */
-     suspend fun loadInfo(symbol: String): Result {
+     fun loadInfo(symbol: String): Result {
         val api: Endpoints by inject()
         val response = api.getOverview(symbol, Constants.API_KEY_2).execute()
         if (response.isSuccessful) {
@@ -65,11 +65,10 @@ class InfoViewModel() : ViewModel(),  KoinComponent {
                     "dd/M/yyyy hh:mm:ss",
                     Locale.US).format(Date())
                 stockResponse.dailyData = emptyList()
-                withContext(Dispatchers.Main) {
-                    stock.value = stockResponse!!
-                }
 
-                Result.Success()
+                Result.Success().also {
+                    it.data = stockResponse
+                }
             } else {
                 Result.Failure(response.message())
             }
