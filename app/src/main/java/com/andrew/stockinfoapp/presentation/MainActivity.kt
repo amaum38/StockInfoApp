@@ -18,7 +18,7 @@ import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
 import com.andrew.stockinfoapp.domain.Result
 import com.andrew.stockinfoapp.domain.SearchableStock
-import com.andrew.stockinfoapp.framework.Constants
+import com.andrew.stockinfoapp.domain.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -1,4 +1,4 @@
-package com.andrew.stockinfoapp.framework
+package com.andrew.stockinfoapp.domain
 
 object Constants {
     const val API_KEY_1 = "IB3VPAFFADOSKTJO"
@@ -6,4 +6,5 @@ object Constants {
     const val INFO = "Info"
     const val LIST = "List"
     const val SYMBOL = "symbol"
+    const val DATE_FORMAT = "dd/M/yyyy hh:mm:ss"
 }

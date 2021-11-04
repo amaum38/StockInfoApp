@@ -14,6 +14,6 @@ data class Stock(@SerialName("Symbol") val symbol: String?,
                  @SerialName("52WeekHigh") val yearHigh: String?,
                  @SerialName("52WeekLow") val yearLow: String?,
                  var dailyData: List<Float> = emptyList(),
-                 var lastUpdate: String = SimpleDateFormat("dd/M/yyyy hh:mm:ss",
+                 var lastUpdate: String = SimpleDateFormat(Constants.DATE_FORMAT,
                      Locale.US).format(Date())
 )

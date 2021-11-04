@@ -3,7 +3,7 @@ package com.andrew.stockinfoapp.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.andrew.stockinfoapp.domain.Result
-import com.andrew.stockinfoapp.framework.Constants
+import com.andrew.stockinfoapp.domain.Constants
 import com.andrew.stockinfoapp.framework.Endpoints
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

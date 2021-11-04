@@ -5,10 +5,8 @@ import com.andrew.stockinfoapp.data.StockDataSource
 import com.andrew.stockinfoapp.domain.Stock
 import com.andrew.stockinfoapp.framework.database.AppDatabase
 import com.andrew.stockinfoapp.framework.database.StockEntity
-import org.koin.core.component.KoinComponent
 
-
-class RoomStockDataSource(context: Context) : StockDataSource, KoinComponent {
+class RoomStockDataSource(context: Context) : StockDataSource {
     private val dao = AppDatabase.getInstance(context).stockDao()
 
     override suspend fun add(stock: Stock) {

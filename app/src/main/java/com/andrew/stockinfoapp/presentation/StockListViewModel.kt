@@ -4,13 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrew.stockinfoapp.domain.Stock
-import com.andrew.stockinfoapp.framework.Constants
+import com.andrew.stockinfoapp.domain.Constants
 import com.andrew.stockinfoapp.framework.Endpoints
 import com.andrew.stockinfoapp.framework.Interactors
 import com.andrew.stockinfoapp.framework.StockAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.floatOrNull
@@ -33,21 +31,24 @@ class StockListViewModel() : ViewModel(), KoinComponent {
      * Check to see if any items need updating, if they do get updated data and update the adapter
      */
     fun checkforUpdates(adapter: StockAdapter) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
+            val indexesToUpdate = mutableListOf<Deferred<Int>>()
             stocks.value?.forEachIndexed { index, stock ->
                 //Get a fresh data list if older than 24 hours or empty, otherwise go to the database
-                val lastUpdate = SimpleDateFormat("dd/M/yyyy hh:mm:ss", Locale.US)
+                val lastUpdate = SimpleDateFormat(Constants.DATE_FORMAT, Locale.US)
                     .parse(stock.lastUpdate)
                 val daysOld = (Date().time - lastUpdate.time) / 86400000
-                if (stock.dailyData.isEmpty() || daysOld >= 1) {
-                    stock.dailyData = stock.symbol?.let { getDailyInfo(it) }!!
-                    stock.lastUpdate = SimpleDateFormat(
-                        "dd/M/yyyy hh:mm:ss", Locale.US).format(Date())
-                    interactors.updateStock(stock)
-                    withContext(Dispatchers.Main) {
-                        adapter.notifyItemChanged(index)
-                    }
+                if (stock.dailyData.isEmpty() || daysOld >= 0) {
+                    indexesToUpdate.add(async(Dispatchers.IO) {
+                        getDailyInfo(stock, index)
+                    })
                 }
+            }
+
+            //run the update code in parallel using async and await all responses before updating the adapter
+            indexesToUpdate.awaitAll()
+            indexesToUpdate.forEach {
+                adapter.notifyItemChanged(it.getCompleted())
             }
         }
     }
@@ -55,11 +56,11 @@ class StockListViewModel() : ViewModel(), KoinComponent {
     /**
     * Get the daily price info to populate sparkline
     */
-    private fun getDailyInfo(symbol: String): List<Float> {
+    private suspend fun getDailyInfo(stock: Stock, index: Int): Int {
         var reversed: List<Float> = emptyList()
             val data: MutableList<Float> = mutableListOf()
             val api: Endpoints by inject()
-            val call = api.getPriceData(symbol, "15min", Constants.API_KEY_2)
+            val call = api.getPriceData(stock.symbol!!, "15min", Constants.API_KEY_2)
             val response = call.execute()
             if (response.isSuccessful) {
                 if (response.body() != null && response.body()!! is JsonObject) {
@@ -76,6 +77,12 @@ class StockListViewModel() : ViewModel(), KoinComponent {
                 reversed = data.reversed()
             }
 
-        return reversed
+        if (reversed.isNotEmpty()) {
+            stock.dailyData = reversed
+            stock.lastUpdate = SimpleDateFormat(Constants.DATE_FORMAT, Locale.US).format(Date())
+            interactors.updateStock(stock)
+        }
+
+        return index
     }
 }

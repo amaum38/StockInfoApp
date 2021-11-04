@@ -6,12 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrew.stockinfoapp.domain.Result
 import com.andrew.stockinfoapp.domain.Stock
-import com.andrew.stockinfoapp.framework.Constants
+import com.andrew.stockinfoapp.domain.Constants
 import com.andrew.stockinfoapp.framework.Endpoints
 import com.andrew.stockinfoapp.framework.Interactors
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.text.SimpleDateFormat
@@ -61,8 +59,7 @@ class InfoViewModel() : ViewModel(),  KoinComponent {
         if (response.isSuccessful) {
             val stockResponse = response.body()
             return if (stockResponse != null) {
-                stockResponse.lastUpdate = SimpleDateFormat(
-                    "dd/M/yyyy hh:mm:ss",
+                stockResponse.lastUpdate = SimpleDateFormat(Constants.DATE_FORMAT,
                     Locale.US).format(Date())
                 stockResponse.dailyData = emptyList()
 
