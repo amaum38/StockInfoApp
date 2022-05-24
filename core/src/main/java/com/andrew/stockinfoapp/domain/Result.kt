@@ -1,8 +1,6 @@
 package com.andrew.stockinfoapp.domain
 
-sealed class Result {
-    class Success() : Result() {
-        lateinit var data: Any
-    }
-    data class Failure(val errorMessage: String) : Result()
+sealed class NetworkResult {
+    data class Success(val data: Any) : NetworkResult()
+    data class Failure(val errorMessage: String) : NetworkResult()
 }

@@ -1,9 +1,9 @@
-package com.andrew.stockinfoapp.framework
+package com.andrew.stockinfoapp.framework.api
 
-import com.andrew.stockinfoapp.domain.Result
 import com.andrew.stockinfoapp.domain.SearchableStockItems
 import com.andrew.stockinfoapp.domain.Stock
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import okhttp3.MediaType.Companion.toMediaType
@@ -17,23 +17,19 @@ import retrofit2.http.Query
 interface Endpoints {
     @GET("query?function=SYMBOL_SEARCH")
     fun getSymbols(@Query("keywords") keywords: String,
-                   @Query("apikey") key: String): Call<SearchableStockItems>
+                   @Query("apikey") key: String = ApiKeyHelper.getApiKey()): Call<SearchableStockItems>
 
     @GET("query?function=OVERVIEW")
     fun getOverview(@Query("symbol") symbol: String,
-                    @Query("apikey") key: String): Call<Stock>
+                    @Query("apikey") key: String = ApiKeyHelper.getApiKey()): Call<Stock>
 
     @GET("query?function=TIME_SERIES_INTRADAY")
     fun getPriceData(@Query("symbol") symbol: String,
                      @Query("interval") interval: String,
-                     @Query("apikey") key: String): Call<JsonElement>
+                     @Query("apikey") key: String = ApiKeyHelper.getApiKey()): Call<JsonElement>
 }
 
-interface ResponseInterface {
-    fun onSucess(result: Result)
-    fun onFailure(result: Result)
-}
-
+@OptIn(ExperimentalSerializationApi::class)
 fun provideJson(): Converter.Factory {
     val json = Json {
         ignoreUnknownKeys = true

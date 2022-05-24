@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Serializable
-data class Stock(@SerialName("Symbol") val symbol: String?,
+data class Stock(@SerialName("Symbol") val symbol: String = "",
                  @SerialName("Name") val name: String?,
                  @SerialName("Description") val description: String?,
                  @SerialName("PERatio") val peRatio: String?,

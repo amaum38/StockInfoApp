@@ -19,7 +19,7 @@ class StockListFragment : Fragment() {
     private lateinit var mContext: Context
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentStockListBinding.inflate(inflater, container, false)
 
         binding.stockList.addItemDecoration(
@@ -27,7 +27,7 @@ class StockListFragment : Fragment() {
 
         val adapter = StockAdapter(object: StockAdapter.OnItemClickListener {
             override fun onItemClicked(stock: Stock) {
-                stock.symbol?.let { (mContext as MainActivity).showInfoFragment(it) }
+                stock.symbol.let { (mContext as MainActivity).showInfoFragment(it) }
             }
         })
 
@@ -35,12 +35,12 @@ class StockListFragment : Fragment() {
         binding.stockList.layoutManager = LinearLayoutManager(activity)
 
         val model: StockListViewModel by viewModels()
-        model.stocks.observe(this, { stocks ->
+        model.stocks.observe(this) { stocks ->
             adapter.updateData(stocks)
-            model.checkforUpdates(adapter)
+            model.checkForUpdates(adapter)
             binding.notice.visibility = if (model.stocks.value?.isEmpty() == true)
                 View.VISIBLE else View.INVISIBLE
-        })
+        }
 
         return binding.root
     }

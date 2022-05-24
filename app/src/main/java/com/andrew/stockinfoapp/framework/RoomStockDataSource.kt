@@ -10,7 +10,7 @@ class RoomStockDataSource(context: Context) : StockDataSource {
     private val dao = AppDatabase.getInstance(context).stockDao()
 
     override suspend fun add(stock: Stock) {
-        dao.addStock(StockEntity(symbol = stock.symbol ?: "",
+        dao.addStock(StockEntity(symbol = stock.symbol,
             name = stock.name,
             description = stock.description,
             peRatio = stock.peRatio,
@@ -22,7 +22,7 @@ class RoomStockDataSource(context: Context) : StockDataSource {
     }
 
     override suspend fun remove(stock: Stock) {
-        dao.removeStock(StockEntity(symbol = stock.symbol ?: "",
+        dao.removeStock(StockEntity(symbol = stock.symbol,
             name = stock.name,
             description = stock.description,
             peRatio = stock.peRatio,
@@ -43,30 +43,38 @@ class RoomStockDataSource(context: Context) : StockDataSource {
             it.yearHigh,
             it.yearLow,
             it.data,
-            it.lastUpdate) }
+            it.lastUpdate
+        )
+    }
 
     override suspend fun getStocksBySymbol(symbol: String): List<Stock> =
         dao.getStocksBySymbol(symbol).map {
-        Stock(
-            it.symbol,
-            it.name,
-            it.description,
-            it.peRatio,
-            it.eps,
-            it.yearHigh,
-            it.yearLow,
-            it.data,
-            it.lastUpdate) }
+            Stock(
+                it.symbol,
+                it.name,
+                it.description,
+                it.peRatio,
+                it.eps,
+                it.yearHigh,
+                it.yearLow,
+                it.data,
+                it.lastUpdate
+            )
+        }
 
     override suspend fun update(stock: Stock) {
-        dao.updateStock(StockEntity(symbol = stock.symbol ?: "",
-            name = stock.name,
-            description = stock.description,
-            peRatio = stock.peRatio,
-            eps = stock.eps,
-            yearHigh = stock.yearHigh,
-            yearLow = stock.yearLow,
-            data = stock.dailyData,
-            lastUpdate = stock.lastUpdate))
+        dao.updateStock(
+            StockEntity(
+                symbol = stock.symbol,
+                name = stock.name,
+                description = stock.description,
+                peRatio = stock.peRatio,
+                eps = stock.eps,
+                yearHigh = stock.yearHigh,
+                yearLow = stock.yearLow,
+                data = stock.dailyData,
+                lastUpdate = stock.lastUpdate
+            )
+        )
     }
 }

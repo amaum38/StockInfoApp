@@ -57,12 +57,12 @@ class StockAdapter(private val itemClickListener: OnItemClickListener)
         }
 
         if (data.isNotEmpty()) {
-            viewHolder.chart.setLineColor(
-                viewHolder.itemView.context.getColor(
-                    if (data.last() > data.first())
-                        android.R.color.holo_green_light else
-                        android.R.color.holo_red_light
-                )
+            viewHolder.chart.lineColor = viewHolder.itemView.context.getColor(
+                if (data.last() > data.first()) {
+                    android.R.color.holo_green_light
+                } else {
+                    android.R.color.holo_red_light
+                }
             )
 
             viewHolder.price.text = String.format("%.2f", data.last())

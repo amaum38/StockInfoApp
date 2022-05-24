@@ -9,16 +9,19 @@ import android.provider.BaseColumns
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.CursorAdapter
+import android.widget.SearchView
+import android.widget.SimpleCursorAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
-import com.andrew.stockinfoapp.domain.Result
-import com.andrew.stockinfoapp.domain.SearchableStock
 import com.andrew.stockinfoapp.domain.Constants
+import com.andrew.stockinfoapp.domain.NetworkResult
+import com.andrew.stockinfoapp.domain.SearchableStock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,16 +45,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        viewModel.searchString.observe(this, {
+        viewModel.searchString.observe(this) {
             lifecycleScope.launch(Dispatchers.IO) {
                 when (val result = viewModel.getStocksFromQuery()) {
-                    is Result.Success -> {
-                        val cursor = MatrixCursor(arrayOf(BaseColumns._ID,
-                            SearchManager.SUGGEST_COLUMN_TEXT_1))
-                        mStocks = result.data as List<SearchableStock>
+                    is NetworkResult.Success -> {
+                        val cursor = MatrixCursor(
+                            arrayOf(
+                                BaseColumns._ID,
+                                SearchManager.SUGGEST_COLUMN_TEXT_1
+                            )
+                        )
+                        mStocks = (result.data as? List<SearchableStock>) ?: emptyList()
                         mStocks.forEachIndexed { index, item ->
-                            cursor.addRow(arrayOf(index,
-                                item.name + " (" + item.symbol + ")"))
+                            cursor.addRow(
+                                arrayOf(
+                                    index,
+                                    item.name + " (" + item.symbol + ")"
+                                )
+                            )
                         }
 
                         withContext(Dispatchers.Main) {
@@ -59,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 
-                    is Result.Failure -> {
+                    is NetworkResult.Failure -> {
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
                                 this@MainActivity,
@@ -70,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        })
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

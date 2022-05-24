@@ -15,9 +15,7 @@ import androidx.room.TypeConverters
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
-
-        const val DATABASE_NAME = "stockinfoapp.db"
-
+        private const val DATABASE_NAME = "stockinfoapp.db"
         private var instance: AppDatabase? = null
 
         private fun create(context: Context): AppDatabase =

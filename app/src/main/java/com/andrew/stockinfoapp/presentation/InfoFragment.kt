@@ -10,9 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.FragmentInfoBinding
-import com.andrew.stockinfoapp.domain.Result
-import com.andrew.stockinfoapp.domain.Stock
 import com.andrew.stockinfoapp.domain.Constants
+import com.andrew.stockinfoapp.domain.NetworkResult
+import com.andrew.stockinfoapp.domain.Stock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,7 +31,7 @@ class InfoFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         _binding = FragmentInfoBinding.inflate(inflater, container, false)
 
         if (savedInstanceState != null) {
@@ -40,8 +40,13 @@ class InfoFragment : Fragment() {
 
         binding.addStock.setOnClickListener {
             //Either add or remove based on if it is already in the database
-            viewModel.stock.value?.let { stock -> if (viewModel.isInList.value == true)
-                viewModel.removeStock(stock) else viewModel.addStock(stock) }
+            viewModel.stock.value?.let { stock ->
+                if (viewModel.isInList.value == true) {
+                    viewModel.removeStock(stock)
+                } else {
+                    viewModel.addStock(stock)
+                }
+            }
 
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.info, activity?.supportFragmentManager
@@ -50,14 +55,20 @@ class InfoFragment : Fragment() {
         }
 
         viewModel = ViewModelProvider(this)[InfoViewModel::class.java]
-        viewModel.stock.observe(viewLifecycleOwner, { stock ->
+        viewModel.stock.observe(viewLifecycleOwner) { stock ->
             if (stock.name == null) {
-                Toast.makeText(activity, getString(R.string.no_info_found),
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    activity, getString(R.string.no_info_found),
+                    Toast.LENGTH_SHORT
+                ).show()
 
                 activity?.supportFragmentManager?.beginTransaction()
-                    ?.replace(R.id.info, activity?.supportFragmentManager
-                        ?.findFragmentByTag(Constants.LIST) ?: StockListFragment(), Constants.LIST)
+                    ?.replace(
+                        R.id.info,
+                        activity?.supportFragmentManager
+                            ?.findFragmentByTag(Constants.LIST) ?: StockListFragment(),
+                        Constants.LIST
+                    )
                     ?.commit()
             } else {
                 binding.name.text = stock.name
@@ -67,20 +78,20 @@ class InfoFragment : Fragment() {
                 binding.yearHigh.text = stock.yearHigh
                 binding.yearLow.text = stock.yearLow
             }
-        })
+        }
 
-        viewModel.matching.observe(viewLifecycleOwner, {
+        viewModel.matching.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 viewModel.stock.value = it[0]
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     when (val result = viewModel.loadInfo(symbol)) {
-                        is Result.Success -> {
+                        is NetworkResult.Success -> {
                             withContext(Dispatchers.Main) {
                                 viewModel.stock.value = result.data as Stock
                             }
                         }
-                        is Result.Failure -> {
+                        is NetworkResult.Failure -> {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(activity, result.errorMessage, Toast.LENGTH_SHORT)
                                     .show()
@@ -89,11 +100,11 @@ class InfoFragment : Fragment() {
                     }
                 }
             }
-        })
+        }
 
-        viewModel.isInList.observe(viewLifecycleOwner, {
-            binding.addStock.text = getString(if (it) R.string.remove else R.string.add)
-        })
+        viewModel.isInList.observe(viewLifecycleOwner) { isInList ->
+            binding.addStock.text = getString(if (isInList) R.string.remove else R.string.add)
+        }
 
         setSymbol(symbol)
 
