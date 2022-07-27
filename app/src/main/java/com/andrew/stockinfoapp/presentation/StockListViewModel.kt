@@ -20,12 +20,10 @@ import java.util.*
 class StockListViewModel : ViewModel(), KoinComponent {
     private val interactors: Interactors = get()
     private val api: Endpoints = get()
+    val stocks = MutableLiveData<List<Stock>>()
 
-    val stocks = MutableLiveData<List<Stock>>().apply {
-        viewModelScope.launch {
-            val stocks = interactors.getStocks()
-            postValue(stocks)
-        }
+    suspend fun loadStockList() {
+        stocks.postValue(interactors.getStocks())
     }
 
     /**

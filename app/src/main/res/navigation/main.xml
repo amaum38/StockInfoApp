@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav"
+            app:startDestination="@id/fragment_stock_list">
+
+    <fragment
+        android:id="@+id/fragment_stock_list"
+        android:name="com.andrew.stockinfoapp.presentation.StockListFragment"
+        tools:layout="@layout/fragment_stock_list">
+        <action
+            android:id="@+id/openStockDetails"
+            app:destination="@id/fragment_info" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_info"
+        android:name="com.andrew.stockinfoapp.presentation.InfoFragment"
+        tools:layout="@layout/fragment_info">
+        <argument
+            android:name="symbol"
+            app:argType="string" />
+
+    </fragment>
+
+</navigation>

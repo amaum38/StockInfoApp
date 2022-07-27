@@ -2,7 +2,6 @@ package com.andrew.stockinfoapp.presentation
 
 import android.app.SearchManager
 import android.content.Context
-import android.database.Cursor
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.provider.BaseColumns
@@ -14,12 +13,11 @@ import android.widget.SearchView
 import android.widget.SimpleCursorAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.ActivityMainBinding
-import com.andrew.stockinfoapp.domain.Constants
 import com.andrew.stockinfoapp.domain.NetworkResult
 import com.andrew.stockinfoapp.domain.SearchableStock
 import kotlinx.coroutines.Dispatchers
@@ -38,45 +36,41 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .add(R.id.info,  StockListFragment(), "list")
-                .commit()
-        }
-
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        viewModel.searchString.observe(this) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                when (val result = viewModel.getStocksFromQuery()) {
-                    is NetworkResult.Success -> {
-                        val cursor = MatrixCursor(
-                            arrayOf(
-                                BaseColumns._ID,
-                                SearchManager.SUGGEST_COLUMN_TEXT_1
-                            )
-                        )
-                        mStocks = (result.data as? List<SearchableStock>) ?: emptyList()
-                        mStocks.forEachIndexed { index, item ->
-                            cursor.addRow(
+        viewModel.searchString.observe(this) { query ->
+            if (query.isNotEmpty()) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    when (val result = viewModel.getStocksFromQuery()) {
+                        is NetworkResult.Success -> {
+                            val cursor = MatrixCursor(
                                 arrayOf(
-                                    index,
-                                    item.name + " (" + item.symbol + ")"
+                                    BaseColumns._ID,
+                                    SearchManager.SUGGEST_COLUMN_TEXT_1
                                 )
                             )
+                            mStocks = (result.data as? List<SearchableStock>) ?: emptyList()
+                            mStocks.forEachIndexed { index, item ->
+                                cursor.addRow(
+                                    arrayOf(
+                                        index,
+                                        item.name + " (" + item.symbol + ")"
+                                    )
+                                )
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                cursorAdapter.changeCursor(cursor)
+                            }
                         }
 
-                        withContext(Dispatchers.Main) {
-                            cursorAdapter.changeCursor(cursor)
-                        }
-                    }
-
-                    is NetworkResult.Failure -> {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                this@MainActivity,
-                                result.errorMessage,
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        is NetworkResult.Failure -> {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    result.errorMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                 }
@@ -134,35 +128,13 @@ class MainActivity : AppCompatActivity() {
             override fun onSuggestionClick(position: Int): Boolean {
                 hideKeyboard(searchView)
                 searchView.onActionViewCollapsed()
-                val cursor = searchView.suggestionsAdapter.getItem(position) as Cursor
-                val selection = cursor.getString(
-                    cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
-                mStocks[position].symbol?.let { showInfoFragment(it) }
+                supportFragmentManager.primaryNavigationFragment?.let {
+                    findNavController(it).navigate(StockListFragmentDirections.openStockDetails(
+                        mStocks[position].symbol ?: ""))
+                }
+
                 return true
             }
         })
-    }
-
-    fun showInfoFragment(symbol: String) {
-        val fragment: Fragment? = supportFragmentManager.findFragmentByTag(Constants.INFO)
-        if (fragment != null && (fragment as InfoFragment).isVisible) {
-            fragment.setSymbol(symbol)
-        } else {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.info,  InfoFragment().also {
-                    it.setSymbol(symbol)
-                }, Constants.INFO).commit()
-        }
-    }
-
-    override fun onBackPressed() {
-        val fragment: Fragment? = supportFragmentManager.findFragmentByTag(Constants.INFO)
-        if (fragment != null && (fragment as InfoFragment).isVisible) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.info,  StockListFragment(), Constants.LIST)
-                .commit()
-        } else {
-            finish()
-        }
     }
 }
