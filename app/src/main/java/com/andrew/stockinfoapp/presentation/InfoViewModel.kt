@@ -30,7 +30,7 @@ class InfoViewModel : ViewModel(),  KoinComponent {
         }
     }
 
-    val matching = MediatorLiveData<List<Stock>>().apply {
+    val matching = MediatorLiveData<Stock?>().apply {
         addSource(symbol) {
             viewModelScope.launch {
                 postValue(
@@ -57,21 +57,5 @@ class InfoViewModel : ViewModel(),  KoinComponent {
     /**
      * Load the stocks information from the api
      */
-     fun loadInfo(symbol: String): NetworkResult {
-        val api: Endpoints = get()
-        val response = api.getOverview(symbol).execute()
-        return if (response.isSuccessful) {
-            val stockResponse = response.body()
-            if (stockResponse != null) {
-                stockResponse.lastUpdate = SimpleDateFormat(Constants.DATE_FORMAT,
-                    Locale.US).format(Date())
-                stockResponse.dailyData = emptyList()
-                NetworkResult.Success(stockResponse)
-            } else {
-                NetworkResult.Failure(response.message())
-            }
-        } else {
-            NetworkResult.Failure(response.message())
-        }
-    }
+     fun loadInfo(symbol: String): NetworkResult = interactors.getStockInfo(symbol)
 }

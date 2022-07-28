@@ -10,27 +10,35 @@ class RoomStockDataSource(context: Context) : StockDataSource {
     private val dao = AppDatabase.getInstance(context).stockDao()
 
     override suspend fun add(stock: Stock) {
-        dao.addStock(StockEntity(symbol = stock.symbol,
-            name = stock.name,
-            description = stock.description,
-            peRatio = stock.peRatio,
-            eps = stock.eps,
-            yearHigh = stock.yearHigh,
-            yearLow = stock.yearLow,
-            data = stock.dailyData,
-            lastUpdate = stock.lastUpdate))
+        dao.addStock(
+            StockEntity(
+                symbol = stock.symbol,
+                name = stock.name,
+                description = stock.description,
+                peRatio = stock.peRatio,
+                eps = stock.eps,
+                yearHigh = stock.yearHigh,
+                yearLow = stock.yearLow,
+                data = stock.dailyData,
+                lastUpdate = stock.lastUpdate
+            )
+        )
     }
 
     override suspend fun remove(stock: Stock) {
-        dao.removeStock(StockEntity(symbol = stock.symbol,
-            name = stock.name,
-            description = stock.description,
-            peRatio = stock.peRatio,
-            eps = stock.eps,
-            yearHigh = stock.yearHigh,
-            yearLow = stock.yearLow,
-            data = stock.dailyData,
-            lastUpdate = stock.lastUpdate))
+        dao.removeStock(
+            StockEntity(
+                symbol = stock.symbol,
+                name = stock.name,
+                description = stock.description,
+                peRatio = stock.peRatio,
+                eps = stock.eps,
+                yearHigh = stock.yearHigh,
+                yearLow = stock.yearLow,
+                data = stock.dailyData,
+                lastUpdate = stock.lastUpdate
+            )
+        )
     }
 
     override suspend fun getStocks(): List<Stock> = dao.getStocks().map {
@@ -47,7 +55,7 @@ class RoomStockDataSource(context: Context) : StockDataSource {
         )
     }
 
-    override suspend fun getStocksBySymbol(symbol: String): List<Stock> =
+    override suspend fun getStocksBySymbol(symbol: String): Stock? =
         dao.getStocksBySymbol(symbol).map {
             Stock(
                 it.symbol,
@@ -60,7 +68,7 @@ class RoomStockDataSource(context: Context) : StockDataSource {
                 it.data,
                 it.lastUpdate
             )
-        }
+        }.firstOrNull()
 
     override suspend fun update(stock: Stock) {
         dao.updateStock(

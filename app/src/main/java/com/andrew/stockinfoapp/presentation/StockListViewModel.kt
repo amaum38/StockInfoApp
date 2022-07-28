@@ -19,7 +19,6 @@ import java.util.*
 
 class StockListViewModel : ViewModel(), KoinComponent {
     private val interactors: Interactors = get()
-    private val api: Endpoints = get()
     val stocks = MutableLiveData<List<Stock>>()
 
     suspend fun loadStockList() {
@@ -39,7 +38,15 @@ class StockListViewModel : ViewModel(), KoinComponent {
                 val daysOld = (Date().time - (lastUpdate?.time ?: Date().time)) / 86400000
                 if (stock.dailyData.isEmpty() || daysOld >= 1) {
                     indexesToUpdate.add(async(Dispatchers.IO) {
-                        getDailyInfo(stock, index)
+                        //getDailyInfo(stock, index)
+                        val priceInfo = interactors.getPriceInfo(stock)
+                        if (priceInfo.isNotEmpty()) {
+                            stock.dailyData = priceInfo
+                            stock.lastUpdate = SimpleDateFormat(Constants.DATE_FORMAT, Locale.US).format(Date())
+                            interactors.updateStock(stock)
+                        }
+
+                        index
                     })
                 }
             }
@@ -50,37 +57,5 @@ class StockListViewModel : ViewModel(), KoinComponent {
                 adapter.notifyItemChanged(it.getCompleted())
             }
         }
-    }
-
-    /**
-    * Get the daily price info to populate sparkline
-    */
-    private suspend fun getDailyInfo(stock: Stock, index: Int): Int {
-        var reversed: List<Float> = emptyList()
-            val data: MutableList<Float> = mutableListOf()
-            val call = api.getPriceData(stock.symbol, "15min")
-            val response = call.execute()
-            if (response.isSuccessful) {
-                if (response.body() != null && response.body()!! is JsonObject) {
-                    val responseObject: JsonObject = response.body() as JsonObject
-                    if (responseObject.containsKey("Time Series (15min)")) {
-                        val timeSeries = responseObject["Time Series (15min)"] as JsonObject
-                        for (key in timeSeries.keys) {
-                            val series = timeSeries[key] as JsonObject;
-                            (series["4. close"] as JsonPrimitive).floatOrNull?.let { data.add(it) }
-                        }
-                    }
-                }
-
-                reversed = data.reversed()
-            }
-
-        if (reversed.isNotEmpty()) {
-            stock.dailyData = reversed
-            stock.lastUpdate = SimpleDateFormat(Constants.DATE_FORMAT, Locale.US).format(Date())
-            interactors.updateStock(stock)
-        }
-
-        return index
     }
 }

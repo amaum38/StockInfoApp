@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.andrew.stockinfoapp.R
 import com.andrew.stockinfoapp.databinding.FragmentInfoBinding
-import com.andrew.stockinfoapp.domain.Constants
 import com.andrew.stockinfoapp.domain.NetworkResult
 import com.andrew.stockinfoapp.domain.Stock
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +45,8 @@ class InfoFragment : Fragment() {
         viewModel.stock.observe(viewLifecycleOwner) { stock ->
             if (stock.name == null) {
                 Toast.makeText(
-                    activity, getString(R.string.no_info_found),
+                    requireContext(),
+                    getString(R.string.no_info_found),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -61,10 +61,11 @@ class InfoFragment : Fragment() {
             }
         }
 
-        viewModel.matching.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                viewModel.stock.value = it[0]
+        viewModel.matching.observe(viewLifecycleOwner) { stock ->
+            if (stock != null) {
+                viewModel.stock.value = stock
             } else {
+                binding.progressBar.visibility = View.VISIBLE
                 lifecycleScope.launch(Dispatchers.IO) {
                     when (val result = viewModel.loadInfo(args.symbol)) {
                         is NetworkResult.Success -> {
@@ -74,12 +75,17 @@ class InfoFragment : Fragment() {
                         }
                         is NetworkResult.Failure -> {
                             withContext(Dispatchers.Main) {
-                                Toast.makeText(activity, result.errorMessage, Toast.LENGTH_SHORT)
-                                    .show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    result.errorMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }
                 }
+
+                binding.progressBar.visibility = View.INVISIBLE
             }
         }
 
